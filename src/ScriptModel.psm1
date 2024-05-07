@@ -51,7 +51,8 @@ function Set-OutputDirectory{
         [Parameter(Mandatory=$true, HelpMessage = "Base path of the execution script.")]
         [string]$basePath
     )
-    $outputDirectoryName = Get-Datetime -Format "yyyy-MM-dd_HH-mm"
+    $outputDirectoryName = Get-Date -Format "yyyy-MM-dd_HH-mm"
+    
 
     $outputPath = Join-Path -Path $basePath -ChildPath "OutputDirectory/$outputDirectoryName"
 
