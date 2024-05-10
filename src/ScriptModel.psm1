@@ -1,33 +1,49 @@
 
 function Invoke-JsonScript{
     param(
-        [Parameter(Mandatory=$true, HelpMessage = "Base path of the execution script.")]
-        [string]$basePath,
-
         [Parameter(Mandatory=$true, HelpMessage = "Path to the JSON input directory.")]
-        [string]$jsonInputPath
+        [string]$InputPath,
+        [Parameter(Mandatory=$false, HelpMessage = "Custom Path to the output directory.")]
+        [string]$OutPath
     )
     Write-Host "Invoking JSON Script..."
     Write-Host ""
 
     Confirm-NpmPackage
     
-    $output = Set-OutputDirectory -basePath $basePath
+    $output = Set-OutputDirectory -OutPath $OutPath
     $outputDirectory = $output[0].ToString()
     
-    ConvertTo-PDF -inputPath $jsonInputPath -outputPath $outputDirectory
+    ConvertTo-PDF -inputPath $InputPath -outputPath $outputDirectory
 }
 
 function Invoke-UrlScript{
     param(
         [Parameter(Mandatory=$true, HelpMessage = "Base path of the execution script.")]
-        [string]$basePath
+        [string]$basePath,
+        [Parameter(Mandatory=$true, HelpMessage = "URL to the Swagger / OpenAPI JSON file.")]
+        [string]$url
     )
     Write-Host "Invoking URL Script..."
+    Write-Host ""
+
+    Confirm-NpmPackage
+    
+    $output = Set-OutputDirectory -basePath $basePath
+    $outputDirectory = $output[0].ToString()
+
+    ConvertTo-PDF -inputPath $url -outputPath $outputDirectory
 }
 
 function Exit-Program {
-    Write-Host "Exiting program..."
+    param(
+        [Parameter(Mandatory=$false, HelpMessage = "Exit message for the program.")]
+        [string]$Msg
+    )
+    if (![string]::IsNullOrEmpty($Msg)){
+        Write-Host $Msg
+        Exit
+    }
     Exit
 }
 
@@ -42,11 +58,11 @@ Exit-Program
 function Set-OutputDirectory{
     param(
         [Parameter(Mandatory=$true, HelpMessage = "Base path of the execution script.")]
-        [string]$basePath
+        [string]$OutPath
     )
     $outputDirectoryName = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
 
-    $outputPath = Join-Path -Path $basePath -ChildPath "OutputDirectory/$outputDirectoryName"
+    $outputPath = Join-Path -Path $OutPath -ChildPath $outputDirectoryName
 
     Write-Host "Output directory set to: $outputPath"
     New-Item -Path $outputPath -ItemType Directory -Force
@@ -81,7 +97,6 @@ function ConvertTo-PDF{
         [string]$outputPath
     )
     Write-Host "This is the converted outputPath:" + $outputPath
-  
     Write-Host "Converting JSON to PDF..."
     Get-ChildItem -Path $inputPath -Filter "*.json" | ForEach-Object {
         $jsonFilePath = $_.FullName
@@ -92,4 +107,5 @@ function ConvertTo-PDF{
         Write-Host "Conversion completed successfully."
         Write-Host ""
     }
+
 }
