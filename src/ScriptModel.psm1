@@ -7,22 +7,15 @@ function Invoke-JsonScript{
         [Parameter(Mandatory=$true, HelpMessage = "Path to the JSON input directory.")]
         [string]$jsonInputPath
     )
-    Write-Host "JSON Function Called"
+    Write-Host "Invoking JSON Script..."
+    Write-Host ""
 
-    $OutputDirectory = Set-OutputDirectory -basePath $basePath
-}
-
-function Invoke-YamlScript{
-    param(
-        [Parameter(Mandatory=$true, HelpMessage = "Base path of the execution script.")]
-        [string]$basePath,
-
-        [Parameter(Mandatory=$true, HelpMessage = "Path to the YAML input directory.")]
-        [string]$yamlInputPath
-    )
-    Write-Host "YAML Function Called"
-
-    $OutputDirectory = Set-OutputDirectory -basePath $basePath
+    Confirm-NpmPackage
+    
+    $output = Set-OutputDirectory -basePath $basePath
+    $outputDirectory = $output[0].ToString()
+    
+    ConvertTo-PDF -inputPath $jsonInputPath -outputPath $outputDirectory
 }
 
 function Invoke-UrlScript{
@@ -30,7 +23,7 @@ function Invoke-UrlScript{
         [Parameter(Mandatory=$true, HelpMessage = "Base path of the execution script.")]
         [string]$basePath
     )
-    Write-Host "URL Function Called"
+    Write-Host "Invoking URL Script..."
 }
 
 function Exit-Program {
@@ -51,8 +44,7 @@ function Set-OutputDirectory{
         [Parameter(Mandatory=$true, HelpMessage = "Base path of the execution script.")]
         [string]$basePath
     )
-    $outputDirectoryName = Get-Date -Format "yyyy-MM-dd_HH-mm"
-    
+    $outputDirectoryName = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
 
     $outputPath = Join-Path -Path $basePath -ChildPath "OutputDirectory/$outputDirectoryName"
 
@@ -60,5 +52,44 @@ function Set-OutputDirectory{
     New-Item -Path $outputPath -ItemType Directory -Force
     Write-Host "Output directory created successfully"
     Write-Host ""
-    return $outputPath
+    return [string]$outputPath
+}
+
+function Confirm-NpmPackage {
+    $npmPackage = "openapi2pdf-cli"
+    $npmCheck = "npm list -g $npmPackage"
+    $resultObject = Invoke-Expression $npmCheck
+    $resultString = $resultObject -Join ""
+
+    if($resultString.Contains("empty")){
+        Write-Host "The npm package $npmPackage is not installed."
+        Write-Host "Installing $npmPackage..."
+        $npmCmd = "npm install -g $npmPackage"
+        Invoke-Expression $npmCmd
+        Write-Host "The NPM package has been installted."
+    }
+    else{
+        Write-Host "The required NPM package is aldready installed."
+    }
+}
+
+function ConvertTo-PDF{
+    param(
+        [Parameter(Mandatory=$true, Position = 1, HelpMessage = "Path to the directory where the OpenAPI / Swagger files to be converted are located.")]
+        [string]$inputPath,
+        [Parameter(Mandatory=$true, Position = 2, HelpMessage = "Path to the directory where the PDF files will be saved.")]
+        [string]$outputPath
+    )
+    Write-Host "This is the converted outputPath:" + $outputPath
+  
+    Write-Host "Converting JSON to PDF..."
+    Get-ChildItem -Path $inputPath -Filter "*.json" | ForEach-Object {
+        $jsonFilePath = $_.FullName
+        $pdfFileName = $_.BaseName + ".pdf"
+        $npmCmd = "openapi2pdf-cli -i $jsonFilePath -o $outputPath/$pdfFileName"
+        Write-Host "Converting" + $_.Name + "to PDF..." + $pdfFileName
+        Invoke-Expression $npmCmd
+        Write-Host "Conversion completed successfully."
+        Write-Host ""
+    }
 }
