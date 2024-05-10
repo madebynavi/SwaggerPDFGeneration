@@ -8,6 +8,17 @@ param(
     [switch]$Help
 )
 
+Invoke-Expression "Clear-Host"
+$Host.UI.RawUI.WindowTitle = "Script : Swagger to PDF Converter"
+$displayMsg = Get-Content -Path "src/MBN.txt" -Raw
+Write-Host $displayMsg
+Write-Host ""
+Write-Host ""
+
+Write-Host $Help
+
+Read-Host "Press Enter to continue..."
+
 if($Help){
     Write-Host "This script converts Swagger / OpenAPI JSON files to PDF files."
     Write-Host "Basic execution: .\Run.ps1"
@@ -15,15 +26,8 @@ if($Help){
     Write-Host "-InPath: Full path to the folder where the local Swagger / OpenAPI JSON files are."
     Write-Host "-OutPath: Full path to the output directory."
     Write-Host "Example: .\Run.ps1 -InPath 'C:\Users\user\Documents\swagger.json' -OutPath 'C:\Users\user\Documents\output'"
-    Exit-Program
+    Exit
 }
-
-Invoke-Expression "Clear-Host"
-$Host.UI.RawUI.WindowTitle = "Script : Swagger to PDF Converter"
-$displayMsg = Get-Content -Path "src/MBN.txt" -Raw
-Write-Host $displayMsg
-Write-Host ""
-Write-Host ""
 
 # Initial path configuration
 $basePath = Get-Location
