@@ -5,7 +5,7 @@ This is an extension of the work done by : https://github.com/iravikumar0403/ope
 This is a script with the purpose of automate PDF generation for documentation based on Swagger 2.0 / OpenAPI 3.0 standard.
 It can be attached to an automated process or used as is for manual execution when needed.
 
-This is for everyone to use, feel free to fork it, modify it for your usecases. 
+This is for everyone to use, feel free to fork it, modify it for your usecases.
 
 ## Instructions
 ### Base Execution
