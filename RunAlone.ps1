@@ -18,6 +18,51 @@ param(
     [Alias("B")]
     [switch]$Base
 )
+# Parameter Validation
+if($Root -and $Base){
+    Write-Host "Error: Cannot use both Root and Base flags together." -ForegroundColor Red
+    Exit
+}
+if($Root -and $In){
+    Write-Host "Error: Cannot use both Root and In flags together." -ForegroundColor Red
+    Exit
+}
+if($Root -and $Out){
+    Write-Host "Error: Cannot use both Root and Out flags together." -ForegroundColor Red
+    Exit
+}
+if($Base -and $In){
+    Write-Host "Error: Cannot use both Base and In flags together." -ForegroundColor Red
+    Exit
+}
+if($Base -and $Out){
+    Write-Host "Error: Cannot use both Base and Out flags together." -ForegroundColor Red
+    Exit
+}
+if($Help -and $Root){
+    Write-Host "Error: Cannot use both Help and Root flags together." -ForegroundColor Red
+    Exit
+}
+if($Help -and $Base){
+    Write-Host "Error: Cannot use both Help and Base flags together." -ForegroundColor Red
+    Exit
+}
+if($Help -and $In){
+    Write-Host "Error: Cannot use both Help and In flags together." -ForegroundColor Red
+    Exit
+}
+if($Help -and $Out){
+    Write-Host "Error: Cannot use both Help and Out flags together." -ForegroundColor Red
+    Exit
+}
+if($Help -and $Compress){
+    Write-Host "Error: Cannot use both Help and Compress flags together." -ForegroundColor Red
+    Exit
+}
+if($Help -and $in -and $Out){
+    Write-Host "Error: Cannot use both Help and In/Out flags together." -ForegroundColor Red
+    Exit
+}
 # Function Definitions
 function Get-Hint{
     Write-Host "`nHint : [-Help / -H] for assistance." -ForegroundColor Green
@@ -196,7 +241,9 @@ if($Root){
     Write-Host "Script Completed."
     Exit
 }
+if($Base){
 
+}
 
 # End of Main Logic
 # ----------------------------------
