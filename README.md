@@ -8,20 +8,61 @@ It can be attached to an automated process or used as is for manual execution wh
 This is for everyone to use, feel free to fork it, modify it for your usecases.
 
 ## Instructions
-### Base Execution
-To use it out of the box, Fork/Download this repo and place JSON files in the InputDirectory and run :
+### Parameters
 ```powershell
-./Run.ps1
+[-Root / -R]
 ```
-Will take the JSON files in "InputDirectory" and convert them to PDF files and store them in a subfolder in "OutputDirectory"
+Executes the script with asumption that the "json" files are located in the root of script.
+Will create an output folder in same folder where script is located.
 
-### Alternative Executions (Not Implemented)
-This is an alternative execution where the "InputDirectory" and "OutputDirectory" are not needed and wanting to use ones own that already exist.
 ```powershell
-./Run.ps1 -InPath <full-path-to-folder-where-jsonfiles-are> -OutPath <full-path-to-folder-where-to-store-pdf>
-
--InPath = Full path to where the files are stored (Optional)
--OutPath = Full path to where the files should be stored after convertion (Optional)
+[-Base / -B]
 ```
-If "InPath" is not passed, it will asume that the files are located in the base location that comes with this repository.
-If "OutPath" is not passed, it will asume and store the PDF files in base location that comes with this repository.
+Executes the script with asumption that the folder structure of repository has been downloaded and is in use.
+
+```powershell
+[-In / -I / -Input]
+```
+Executes the script with a custom path to where the "json" files are located.
+If no "Out" param is provided, an output folder in script root will be created.
+
+```powershell
+[-Out / -O / -Output]
+```
+Executes the script with a custom path to where to store the "pdf" files.
+If no "In" param is provided, asumes "InputDirectory" from repo or manually created as location of "json" files.
+
+```powershell
+[-C / -Compress]
+```
+Will ZIP/Compress the output folder. Can be conmbined with all other param except [-Help / -H]
+
+```powershell
+[-Help / -H]
+```
+Only executes the script to show the built-in help message.
+
+### Examples
+```powershell
+    .\Run.ps1 [-Help / -H]
+
+    .\Run.ps1 [-Root / -R]
+
+    .\Run.ps1 [-Base / -B]
+
+    .\Run.ps1 [-In / -I / -Input] <Path>
+
+    .\Run.ps1 [-Out / -O / -Output] <Path>
+
+    .\Run.ps1 [-In / -I / -Input] <Path> [-Out / -O / -Output] <Path>
+    
+    .\Run.ps1 [-Root / -R] [-Compress / -C / -Comp]
+
+    .\Run.ps1 [-Base / -B] [-Compress / -C / -Comp]
+
+    .\Run.ps1 [-In / -I / -Input] <Path> [-Compress / -C / -Comp]
+
+    .\Run.ps1 [-Out / -O / -Output] <Path> [-Compress / -C / -Comp]
+
+    .\Run.ps1 [-In / -I / -Input] <Path> [-Out / -O / -Output] <Path> [-Compress / -C / -Comp]
+```

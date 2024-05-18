@@ -19,98 +19,7 @@ param(
     [switch]$Base
 )
 # Parameter Validation
-if($Root -and $Base){
-    Write-Host "Error: Cannot use both Root and Base flags together." -ForegroundColor Red
-    Exit
-}
-if($Root -and $In){
-    Write-Host "Error: Cannot use both Root and In flags together." -ForegroundColor Red
-    Exit
-}
-if($Root -and $Out){
-    Write-Host "Error: Cannot use both Root and Out flags together." -ForegroundColor Red
-    Exit
-}
-if($Root -and $In -and $Out){
-    Write-Host "Error: Cannot use both Root and In/Out flags together." -ForegroundColor Red
-    Exit
-}
-if($Base -and $In){
-    Write-Host "Error: Cannot use both Base and In flags together." -ForegroundColor Red
-    Exit
-}
-if($Base -and $Out){
-    Write-Host "Error: Cannot use both Base and Out flags together." -ForegroundColor Red
-    Exit
-}
-if($Base -and $In -and $Out){
-    Write-Host "Error: Cannot use both Base and In/Out flags together." -ForegroundColor Red
-    Exit
-}
-if($Help -and $Root){
-    Write-Host "Error: Cannot use both Help and Root flags together." -ForegroundColor Red
-    Exit
-}
-if($Help -and $Base){
-    Write-Host "Error: Cannot use both Help and Base flags together." -ForegroundColor Red
-    Exit
-}
-if($Help -and $In){
-    Write-Host "Error: Cannot use both Help and In flags together." -ForegroundColor Red
-    Exit
-}
-if($Help -and $Out){
-    Write-Host "Error: Cannot use both Help and Out flags together." -ForegroundColor Red
-    Exit
-}
-if($Help -and $Compress){
-    Write-Host "Error: Cannot use both Help and Compress flags together." -ForegroundColor Red
-    Exit
-}
-if($Help -and $in -and $Out){
-    Write-Host "Error: Cannot use both Help and In/Out flags together." -ForegroundColor Red
-    Exit
-}
-if($Help -and $Root -and $Compress){
-    Write-Host "Error: Cannot use both Help and Root/Compress flags together." -ForegroundColor Red
-    Exit
-}
-if($Help -and $Base -and $Compress){
-    Write-Host "Error: Cannot use both Help and Base/Compress flags together." -ForegroundColor Red
-    Exit
-}
-if($Help -and $In -and $Compress){
-    Write-Host "Error: Cannot use both Help and In/Compress flags together." -ForegroundColor Red
-    Exit
-}
-if($Help -and $Out -and $Compress){
-    Write-Host "Error: Cannot use both Help and Out/Compress flags together." -ForegroundColor Red
-    Exit
-}
-if($Help -and $In -and $Out -and $Compress){
-    Write-Host "Error: Cannot use both Help and In/Out/Compress flags together." -ForegroundColor Red
-    Exit
-}
-if($Help -and $Root -and $Base){
-    Write-Host "Error: Cannot use both Help and Root/Base flags together." -ForegroundColor Red
-    Exit
-}
-if($Help -and $Root -and $Base -and $In){
-    Write-Host "Error: Cannot use both Help and Root/Base/In flags together." -ForegroundColor Red
-    Exit
-}
-if($Help -and $Root -and $Base -and $Out){
-    Write-Host "Error: Cannot use both Help and Root/Base/Out flags together." -ForegroundColor Red
-    Exit
-}
-if($Help -and $Root -and $Base -and $In -and $Out){
-    Write-Host "Error: Cannot use both Help and Root/Base/In/Out flags together." -ForegroundColor Red
-    Exit
-}
-if($Help -and $Root -and $Base -and $In -and $Out -and $Compress){
-    Write-Host "Error: Cannot use both Help and Root/Base/In/Out/Compress flags together." -ForegroundColor Red
-    Exit
-}
+# TODO : Add Parameter Validation
 # End of Parameter Validation
 # ----------------------------------
 # Function Definitions
@@ -134,24 +43,26 @@ Executions:
     .\Run.ps1 [-In / -I / -Input] <Path>
     .\Run.ps1 [-Out / -O / -Output] <Path>
     .\Run.ps1 [-In / -I / -Input] <Path> [-Out / -O / -Output] <Path>
-    .\Run.ps1 [-Root / -R] [-Compresse / -C / -Comp]
-    .\Run.ps1 [-Base / -B] [-Compresse / -C / -Comp]
-    .\Run.ps1 [-In / -I / -Input] <Path> [-Compresse / -C / -Comp]
-    .\Run.ps1 [-Out / -O / -Output] <Path> [-Compresse / -C / -Comp]
-    .\Run.ps1 [-In / -I / -Input] <Path> [-Out / -O / -Output] <Path> [-Compresse / -C / -Comp]
+    .\Run.ps1 [-Root / -R] [-Compress / -C / -Comp]
+    .\Run.ps1 [-Base / -B] [-Compress / -C / -Comp]
+    .\Run.ps1 [-In / -I / -Input] <Path> [-Compress / -C / -Comp]
+    .\Run.ps1 [-Out / -O / -Output] <Path> [-Compress / -C / -Comp]
+    .\Run.ps1 [-In / -I / -Input] <Path> [-Out / -O / -Output] <Path> [-Compress / -C / -Comp]
 
 Parameters:
     -Help / -H [boolean]
         Flag to get the help message.
 
     -Root / -R [boolean]
-        Flag to run the script with root folder as input.
+        Flag to run the script with root folder as input and also as output.
 
     -In / -I / -Input <Path> [string]
         Full path to the local Swagger / OpenAPI JSON file.
+        If none provided, the script will asume "InputDirectory" exists in script root folder.
 
     -Out / -O / -Output <Path> [string]
         Full path to the output directory.
+        If none provided, the script will asume "OutputDirectory" exists in script root folder or create if it does not exist.
 
     -Compress / -C / -Comp [boolean]
         Flag to ZIP/Compress the output PDF folder.
@@ -256,46 +167,12 @@ function Set-CompressFolder{
     Write-Host ""
 
 }
-function Set-Pathing{
-    param(
-        [Parameter(Mandatory=$true, HelpMessage = "The custom path to the input directory.")]
-        [string]$InPath,
-        [Parameter(Mandatory=$true, HelpMessage = "The custom path to the output directory.")]
-        [string]$OutPath
-    )
-    if(![string]::IsNullOrEmpty($InPath)){
-        $inputPath = $InPath
-        if(Test-Path -Path $inputPath){
-            Write-Host "[INFO] - " -ForegroundColor Cyan -NoNewline
-            Write-Host "Input Path is valid."
-            Write-Host ""
-        }
-        else{
-            Write-Host "[ERROR] - " -ForegroundColor Red -NoNewline
-            Write-Host "Input Path is invalid, exiting program..."
-            Exit
-        }
-    }
-    if(![string]::IsNullOrEmpty($OutPath)){
-        $outputPath = $OutPath
-        if(Test-Path -Path $outputPath){
-            Write-Host "[INFO] - " -ForegroundColor Cyan -NoNewline
-            Write-Host "Output Path is valid."
-            Write-Host ""
-        }
-        else{
-            Write-Host "[ERROR] - " -ForegroundColor Red -NoNewline
-            Write-Host "Output Path is invalid, exiting program..."
-            Exit
-        }
-    }
-}
 # End of Function Definitions
 # ----------------------------------
 # Variable Setting
 $inputPath = Join-Path -Path $PSScriptRoot -ChildPath "InputDirectory"
 $outFolder = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
-$outputPath = Join-Path -Path $PSScriptRoot -ChildPath "OutputDirectory" -ChildPath $outFolder
+$outputPath = Join-Path -Path $PSScriptRoot -ChildPath "OutputDirectory/$outFolder"
 # End of Variable Setting
 # ----------------------------------
 # Main Logic Here
@@ -312,7 +189,7 @@ if($Root){
     $outputPath = Join-Path -Path $PSScriptRoot -ChildPath $outFolder
     Set-OutputDirectory -Directory $outputPath
     Test-NPM
-    Get-Content -Path $inputPath -Filter "*.json" | Foreach-Object {
+    Get-ChildItem -Path $inputPath -Filter "*.json" | ForEach-Object {
         $jsonFile = $_.FullName
         $pdfFile = $_.BaseName + ".pdf"
         $pdfOutput = Join-Path -Path $outputPath -ChildPath $pdfFile
@@ -328,7 +205,7 @@ if($Root){
 if($Base){
     Set-OutputDirectory -Directory $outputPath
     Test-NPM
-    Get-Content -Path $inputPath -Filter "*.json" | Foreach-Object {
+    Get-ChildItem -Path $inputPath -Filter "*.json" | ForEach-Object {
         $jsonFile = $_.FullName
         $pdfFile = $_.BaseName + ".pdf"
         $pdfOutput = Join-Path -Path $outputPath -ChildPath $pdfFile
@@ -341,11 +218,32 @@ if($Base){
     Write-Host "Script Completed."
     Exit
 }
-if(![string]::IsNullOrEmpty($In) -or ![string]::IsNullOrEmpty($Out)){
-    Set-Pathing -InPath $In -OutPath $Out
+if(![string]::IsNullOrEmpty($In)){
+    if(Test-Path -Path $In){
+        $inputPath = $In
+        Write-Host "[OK] - " -ForegroundColor Green -NoNewline
+        Write-Host "The input path is valid."
+    }
+    else{
+        Write-Host "[ERROR] - " -ForegroundColor Red -NoNewline
+        Write-Host "The input path is invalid, exiting program..."
+        Exit
+    }
+    if(![string]::IsNullOrEmpty($Out)){
+        if(Test-Path -Path $Out){
+            $outputPath = $Out
+            Write-Host "[OK] - " -ForegroundColor Green -NoNewline
+        Write-Host "The output path is valid."
+        }
+        else{
+            Write-Host "[ERROR] - " -ForegroundColor Red -NoNewline
+            Write-Host "The output path is invalid, exiting program..."
+            Exit
+        }
+    }
     Set-OutputDirectory -Directory $outputPath
     Test-NPM
-    Get-Content -Path $inputPath -Filter "*.json" | Foreach-Object {
+    Get-ChildItem -Path $inputPath -Filter "*.json" | ForEach-Object {
         $jsonFile = $_.FullName
         $pdfFile = $_.BaseName + ".pdf"
         $pdfOutput = Join-Path -Path $outputPath -ChildPath $pdfFile
@@ -358,6 +256,43 @@ if(![string]::IsNullOrEmpty($In) -or ![string]::IsNullOrEmpty($Out)){
     Write-Host "Script Completed."
     Exit
 }
-
+if(![string]::IsNullOrEmpty($Out)){
+    if(Test-Path -Path $Out){
+        $outputPath = $Out
+        Write-Host "[OK] - " -ForegroundColor Green -NoNewline
+        Write-Host "The input path is valid."
+    }
+    else{
+        Write-Host "[ERROR] - " -ForegroundColor Red -NoNewline
+        Write-Host "The outpuit path is invalid, exiting program..."
+        Exit
+    }
+    if(![string]::IsNullOrEmpty($In)){
+        if(Test-Path -Path $In){
+            $inputPath = $In
+            Write-Host "[OK] - " -ForegroundColor Green -NoNewline
+        Write-Host "The input path is valid."
+        }
+        else{
+            Write-Host "[ERROR] - " -ForegroundColor Red -NoNewline
+            Write-Host "The input path is invalid, exiting program..."
+            Exit
+        }
+    }
+    Set-OutputDirectory -Directory $outputPath
+    Test-NPM
+    Get-ChildItem -Path $inputPath -Filter "*.json" | ForEach-Object {
+        $jsonFile = $_.FullName
+        $pdfFile = $_.BaseName + ".pdf"
+        $pdfOutput = Join-Path -Path $outputPath -ChildPath $pdfFile
+        Set-PDF -InputFile $jsonFile -OutputFile $pdfOutput
+    }
+    if($Compress){
+        Set-CompressFolder -Directory $outputPath
+    }
+    Write-Host "[INFO] - " -ForegroundColor Cyan -NoNewline
+    Write-Host "Script Completed."
+    Exit
+}
 # End of Main Logic
 # ----------------------------------
